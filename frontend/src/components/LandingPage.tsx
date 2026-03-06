@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import LanguageToggle from './LanguageToggle';
 import { StoreCardSkeleton } from './SkeletonLoader';
-import { showError } from '../utils/errorHandler';
 
 interface Props {
   onStart: (storeType: string) => void;
@@ -20,7 +19,7 @@ interface DemoMerchant {
   icon: string;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 // Fallback store types (used if API fails)
 const FALLBACK_STORE_TYPES = [
@@ -92,8 +91,8 @@ export default function LandingPage({ onStart, language, onLanguageChange }: Pro
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Failed to fetch demo merchants:', err);
-        showError('catalog_load_failed', language as 'hi' | 'en');
+        console.error('Failed to fetch demo merchants, using fallback:', err);
+        // Silently fall back to built-in store types — no error toast needed
         setLoading(false);
       });
   }, [language]);

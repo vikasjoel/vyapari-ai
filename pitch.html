@@ -48,7 +48,7 @@ html, body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 60px 80px;
+  padding: 48px 80px 64px;
   opacity: 0;
   visibility: hidden;
   transform: translateY(30px);
@@ -232,7 +232,8 @@ html, body {
   font-family: 'Playfair Display', serif;
   font-weight: 900;
   font-size: clamp(36px, 4vw, 64px);
-  line-height: 1;
+  line-height: 1.2;
+  padding: 0.05em 0;
 }
 
 .stat-label {
@@ -249,8 +250,9 @@ html, body {
   font-family: 'Playfair Display', serif;
   font-weight: 900;
   font-size: clamp(80px, 12vw, 180px);
-  line-height: 0.9;
+  line-height: 1.15;
   letter-spacing: -0.04em;
+  padding: 0.05em 0;
 }
 
 /* ─── Tag / Badge ─── */
@@ -578,6 +580,78 @@ html, body {
   .three-col, .four-col { grid-template-columns: 1fr; }
 }
 
+/* ─── Static Mode (no animations) ─── */
+.static-mode .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+.static-mode .slide.active .reveal {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.static-mode .orbit-ring {
+  animation: none !important;
+}
+
+/* ─── Print Mode (all slides stacked) ─── */
+.print-mode {
+  overflow: auto !important;
+  height: auto !important;
+}
+
+.print-mode .deck {
+  width: 100%;
+  height: auto !important;
+  position: relative;
+}
+
+.print-mode .slide {
+  position: relative !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  width: 100%;
+  height: 100vh;
+  page-break-after: always;
+  break-after: page;
+}
+
+.print-mode .slide .reveal {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+.print-mode .slide .orbit-ring {
+  animation: none !important;
+}
+
+.print-mode .nav-bar {
+  display: none !important;
+}
+
+@media print {
+  .nav-bar { display: none !important; }
+  .slide {
+    position: relative !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    page-break-after: always;
+    break-after: page;
+  }
+  .slide .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+  .orbit-ring { animation: none !important; }
+}
+
 /* ─── Pulse dot ─── */
 .pulse-dot {
   width: 10px; height: 10px;
@@ -659,9 +733,9 @@ html, body {
   <div class="slide slide-problem" data-slide="1">
     <div class="center-col">
       <span class="tag tag-saffron reveal">The Problem</span>
-      <div class="big-number gradient-text mt-32 reveal d1">99.97%</div>
-      <p class="headline headline-sm mt-24 reveal d2">of India's merchants are <em>not</em> on ONDC</p>
-      <div class="three-col mt-48 reveal d3">
+      <div class="big-number gradient-text mt-24 reveal d1">99.97%</div>
+      <p class="headline headline-sm mt-16 reveal d2">of India's merchants are <em>not</em> on ONDC</p>
+      <div class="three-col mt-32 reveal d3">
         <div class="stat-box">
           <div class="stat-number text-saffron">63M</div>
           <div class="stat-label">MSMEs in India</div>
@@ -801,10 +875,10 @@ html, body {
     <div class="center-col">
       <span class="tag tag-blue reveal">Architecture</span>
       <h2 class="headline headline-md mt-24 reveal d1">Multi-Agent Orchestration on <span class="gradient-text-blue">Bedrock AgentCore</span></h2>
-      <div class="img-frame mt-32 reveal d2" style="max-width:900px;">
-        <img src="blog_04_architecture_diagram.png" alt="Architecture Diagram" loading="lazy">
+      <div class="img-frame mt-24 reveal d2" style="max-width:900px; max-height:380px; overflow:hidden;">
+        <img src="blog_04_architecture_diagram.png" alt="Architecture Diagram" loading="lazy" style="width:100%; height:auto;">
       </div>
-      <div class="three-col mt-32">
+      <div class="three-col mt-24">
         <div class="reveal d3" style="text-align:center;">
           <div style="font-weight:700; color:var(--saffron);">Persistent Memory</div>
           <div class="body-sm text-dim" style="margin-top:4px;">STM + LTM + Episodic — context survives across sessions</div>
@@ -826,7 +900,7 @@ html, body {
     <div class="center-col">
       <span class="tag tag-saffron reveal">How It Works</span>
       <h2 class="headline headline-md mt-24 reveal d1">The Agent System</h2>
-      <div class="agent-flow mt-40 reveal d2">
+      <div class="agent-flow mt-32 reveal d2">
         <div class="agent-node agent-sup">Supervisor</div>
         <div class="agent-arrow">→</div>
         <div style="display:flex; flex-direction:column; gap:10px;">
@@ -845,7 +919,7 @@ html, body {
           <div class="agent-node" style="background:rgba(20,184,166,0.1); border:1px solid rgba(20,184,166,0.25); color:var(--teal); min-width:120px; font-size:13px;">Translate</div>
         </div>
       </div>
-      <div class="two-col mt-40" style="gap:32px;">
+      <div class="two-col mt-24" style="gap:32px;">
         <div class="card reveal d3">
           <div style="font-weight:700; color:var(--saffron);">Strands Agents SDK</div>
           <div class="body-sm text-dim" style="margin-top:8px;">Python-native multi-agent orchestration with @tool decorator pattern. Sub-agents as tools of the supervisor.</div>
@@ -1206,6 +1280,17 @@ html, body {
   const progressFill = document.getElementById('progressFill');
   const prevBtn = document.getElementById('prevBtn');
   const nextBtn = document.getElementById('nextBtn');
+
+  // Static mode: ?static disables animations, ?print shows all slides stacked
+  const params = new URLSearchParams(window.location.search);
+  if (params.has('static') || params.has('print')) {
+    document.body.classList.add('static-mode');
+  }
+  if (params.has('print')) {
+    document.body.classList.add('print-mode');
+    // In print mode, make ALL slides active/visible
+    slides.forEach(s => s.classList.add('active'));
+  }
 
   slideTotal.textContent = String(total).padStart(2, '0');
 

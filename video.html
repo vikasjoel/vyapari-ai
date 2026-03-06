@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vyapari.ai — Demo Video | AWS AI for Bharat 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@700;900&family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #060a14;
+  --bg-card: #111827;
+  --saffron: #f97316;
+  --saffron-light: #fdba74;
+  --blue: #2563eb;
+  --blue-light: #60a5fa;
+  --text: #f1ede6;
+  --text-dim: #94a3b8;
+  --text-muted: #475569;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.tag {
+  display: inline-flex;
+  padding: 6px 16px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(249, 115, 22, 0.12);
+  color: var(--saffron);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+}
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-weight: 900;
+  font-size: clamp(32px, 5vw, 56px);
+  margin-top: 20px;
+  line-height: 1.2;
+}
+h1 span {
+  background: linear-gradient(135deg, var(--saffron), var(--saffron-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.subtitle {
+  color: var(--text-dim);
+  font-size: clamp(16px, 1.5vw, 20px);
+  font-weight: 300;
+  margin-top: 12px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.video-wrapper {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(249, 115, 22, 0.15);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 40px rgba(249, 115, 22, 0.08);
+  background: #000;
+}
+video {
+  width: 100%;
+  display: block;
+}
+.links {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-top: 40px;
+  flex-wrap: wrap;
+}
+.link-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(249, 115, 22, 0.12);
+  border-radius: 12px;
+  padding: 16px 24px;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.2s;
+  min-width: 180px;
+}
+.link-card:hover {
+  border-color: rgba(249, 115, 22, 0.4);
+  box-shadow: 0 0 20px rgba(249, 115, 22, 0.1);
+  transform: translateY(-2px);
+}
+.link-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+}
+.link-label.orange { color: var(--saffron); }
+.link-label.blue { color: var(--blue-light); }
+.link-label.teal { color: #14b8a6; }
+.link-label.green { color: #22c55e; }
+.link-value {
+  font-size: 13px;
+  color: var(--text-dim);
+}
+.hindi {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-weight: 600;
+  color: var(--saffron-light);
+  font-size: clamp(18px, 2vw, 24px);
+  text-align: center;
+  margin-top: 32px;
+}
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  color: var(--text-muted);
+  font-size: 14px;
+}
+.footer strong { color: var(--text-dim); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <span class="tag">AWS AI for Bharat Hackathon 2026</span>
+    <h1><span>Vyapari.ai</span> — Demo Video</h1>
+    <p class="subtitle">3-minute walkthrough of the AI Commerce Copilot that onboards India's merchants onto ONDC through Hindi conversation</p>
+  </div>
+
+  <div class="video-wrapper">
+    <video controls preload="metadata" poster="">
+      <source src="video/vyapari_demo.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  </div>
+
+  <p class="hindi">आपकी दुकान। आपका नाम। अब पूरे भारत में।</p>
+
+  <div class="links">
+    <a href="/" class="link-card">
+      <div class="link-label orange">Live Demo</div>
+      <div class="link-value">Try the app</div>
+    </a>
+    <a href="pitch.html" class="link-card">
+      <div class="link-label blue">Pitch Deck</div>
+      <div class="link-value">15-slide presentation</div>
+    </a>
+    <a href="blog.html" class="link-card">
+      <div class="link-label teal">Tech Blog</div>
+      <div class="link-value">Architecture deep-dive</div>
+    </a>
+    <a href="https://github.com/vikasgoel2000/Vyapari" class="link-card">
+      <div class="link-label green">GitHub</div>
+      <div class="link-value">Source code</div>
+    </a>
+  </div>
+
+  <div class="footer">
+    <p>Built by <strong>Vikas Goel</strong> — CTO, Nexvia.ai — Professional Track</p>
+    <p style="margin-top:8px;">Powered by <strong>Amazon Bedrock AgentCore</strong> | Claude Sonnet 4 | 16 AWS Services</p>
+  </div>
+</div>
+</body>
+</html>
