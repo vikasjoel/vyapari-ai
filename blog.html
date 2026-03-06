@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building an AI Commerce Copilot for India's 63 Million Merchants | Vyapari.ai</title>
+<meta name="description" content="How Vyapari.ai uses Amazon Bedrock AgentCore to onboard 63 million Indian merchants onto ONDC through Hindi conversation and template catalogs.">
+<meta property="og:title" content="Building an AI Commerce Copilot for India's 63 Million Merchants">
+<meta property="og:description" content="Multi-agent orchestration, template catalogs, and ONDC integration — all in Hindi.">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0f1b2d;
+    --navy-mid: #1a2d4a;
+    --navy-light: #243b5e;
+    --saffron: #f97316;
+    --saffron-glow: #fb923c;
+    --saffron-deep: #ea580c;
+    --cream: #faf8f5;
+    --cream-dark: #f0ece6;
+    --ink: #1a1a1a;
+    --ink-light: #4a4a4a;
+    --ink-muted: #7a7a7a;
+    --green: #059669;
+    --green-light: #d1fae5;
+    --red: #dc2626;
+    --article-width: 740px;
+    --wide-width: 920px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Sans 3', 'Noto Sans Devanagari', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.72;
+    font-size: 18px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ─── TOP BAR ─── */
+  .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: var(--navy);
+    border-bottom: 3px solid var(--saffron);
+    padding: 0 24px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(12px);
+  }
+  .topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .topbar-logo {
+    width: 32px;
+    height: 32px;
+    background: var(--saffron);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 16px;
+    font-family: 'DM Serif Display', serif;
+  }
+  .topbar-name {
+    color: white;
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+  }
+  .topbar-tag {
+    color: var(--saffron-glow);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: rgba(249,115,22,0.12);
+    padding: 3px 10px;
+    border-radius: 4px;
+  }
+  .topbar-cta {
+    background: var(--saffron);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .topbar-cta:hover { background: var(--saffron-deep); }
+
+  /* ─── HERO ─── */
+  .hero {
+    margin-top: 56px;
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+    padding: 80px 24px 72px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(249,115,22,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(37,99,235,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    max-width: var(--article-width);
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero-category {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--saffron-glow);
+    margin-bottom: 24px;
+  }
+  .hero-category::before {
+    content: '';
+    width: 32px;
+    height: 2px;
+    background: var(--saffron);
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 5.5vw, 52px);
+    line-height: 1.12;
+    color: white;
+    margin-bottom: 20px;
+    letter-spacing: -0.01em;
+  }
+  .hero h1 span {
+    color: var(--saffron-glow);
+  }
+  .hero-subtitle {
+    font-size: 20px;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.5;
+    max-width: 600px;
+    margin-bottom: 32px;
+  }
+  .hero-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .hero-author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .hero-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--saffron), var(--navy-light));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 16px;
+    border: 2px solid rgba(255,255,255,0.15);
+  }
+  .hero-author-info {
+    display: flex;
+    flex-direction: column;
+  }
+  .hero-author-name {
+    color: white;
+    font-weight: 600;
+    font-size: 15px;
+  }
+  .hero-author-role {
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+  }
+  .hero-divider {
+    width: 1px;
+    height: 32px;
+    background: rgba(255,255,255,0.15);
+  }
+  .hero-detail {
+    color: rgba(255,255,255,0.45);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ─── STAT RIBBON ─── */
+  .stat-ribbon {
+    background: var(--navy-mid);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 0 24px;
+  }
+  .stat-ribbon-inner {
+    max-width: var(--wide-width);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+  }
+  .stat-item {
+    text-align: center;
+    padding: 28px 16px;
+    position: relative;
+  }
+  .stat-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: rgba(255,255,255,0.08);
+  }
+  .stat-number {
+    font-family: 'DM Serif Display', serif;
+    font-size: 32px;
+    color: var(--saffron-glow);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  /* ─── ARTICLE BODY ─── */
+  .article {
+    max-width: var(--article-width);
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+
+  .article h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 34px;
+    line-height: 1.2;
+    margin: 56px 0 20px;
+    color: var(--navy);
+    position: relative;
+    padding-top: 32px;
+  }
+  .article h2::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 48px;
+    height: 3px;
+    background: var(--saffron);
+    border-radius: 2px;
+  }
+
+  .article h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    line-height: 1.3;
+    margin: 40px 0 14px;
+    color: var(--navy-mid);
+  }
+
+  .article p {
+    margin: 0 0 20px;
+    color: var(--ink-light);
+  }
+
+  .article strong {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .article a {
+    color: var(--saffron-deep);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-color: rgba(249,115,22,0.3);
+    transition: text-decoration-color 0.2s;
+  }
+  .article a:hover {
+    text-decoration-color: var(--saffron);
+  }
+
+  .article ol, .article ul {
+    margin: 0 0 20px;
+    padding-left: 24px;
+    color: var(--ink-light);
+  }
+  .article li {
+    margin-bottom: 8px;
+  }
+  .article li strong {
+    color: var(--ink);
+  }
+
+  /* ─── PULL QUOTE ─── */
+  .pullquote {
+    margin: 40px -40px;
+    padding: 32px 40px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+    border-radius: 12px;
+    border-left: 4px solid var(--saffron);
+    position: relative;
+  }
+  .pullquote p {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    line-height: 1.45;
+    color: rgba(255,255,255,0.9);
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* ─── IMAGES ─── */
+  .article-img {
+    margin: 32px -40px;
+    position: relative;
+  }
+  .article-img img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 2px 8px rgba(0,0,0,0.06);
+    display: block;
+  }
+  .article-img figcaption {
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-muted);
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* ─── CODE BLOCKS ─── */
+  .article code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+    background: rgba(15,27,45,0.06);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--navy-mid);
+  }
+
+  pre {
+    margin: 24px -40px 28px;
+    background: var(--navy);
+    border-radius: 10px;
+    padding: 24px 28px;
+    overflow-x: auto;
+    position: relative;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  pre::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: rgba(255,255,255,0.25);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  pre code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.65;
+    color: #e2e8f0;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+  }
+  /* Syntax highlighting */
+  .kw { color: #c084fc; } /* keyword */
+  .fn { color: #67e8f9; } /* function */
+  .st { color: #86efac; } /* string */
+  .cm { color: #64748b; } /* comment */
+  .op { color: #fbbf24; } /* operator */
+  .nu { color: #fb923c; } /* number */
+  .ty { color: #f472b6; } /* type */
+  .pr { color: #7dd3fc; } /* property */
+
+  /* ─── TABLE ─── */
+  .table-wrap {
+    margin: 24px -40px 28px;
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    background: white;
+  }
+  thead {
+    background: var(--navy);
+    color: white;
+  }
+  th {
+    padding: 14px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    color: var(--ink-light);
+  }
+  td strong { color: var(--ink); }
+  tbody tr:hover { background: #fafafa; }
+
+  /* ─── COMPARISON BOX ─── */
+  .compare-box {
+    margin: 28px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .compare-old, .compare-new {
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 15px;
+  }
+  .compare-old {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+  }
+  .compare-new {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+  }
+  .compare-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
+  }
+  .compare-old .compare-label { color: var(--red); }
+  .compare-new .compare-label { color: var(--green); }
+  .compare-old p, .compare-new p {
+    font-size: 15px;
+    color: var(--ink-light);
+    font-style: italic;
+    margin: 0;
+  }
+
+  /* ─── HINDI BLOCK ─── */
+  .hindi-block {
+    margin: 24px 0;
+    background: white;
+    border-radius: 10px;
+    padding: 28px;
+    border: 1px solid var(--cream-dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    font-family: 'Noto Sans Devanagari', 'Source Sans 3', sans-serif;
+  }
+  .hindi-block strong {
+    display: block;
+    margin-bottom: 6px;
+  }
+  .hindi-block ul {
+    padding-left: 20px;
+  }
+
+  /* ─── HR / DIVIDER ─── */
+  .article hr {
+    border: none;
+    height: 3px;
+    background: linear-gradient(90deg, var(--saffron), var(--navy-light), transparent);
+    margin: 48px 0;
+    border-radius: 2px;
+  }
+
+  /* ─── CTA SECTION ─── */
+  .cta-section {
+    margin: 56px -40px 0;
+    background: var(--navy);
+    border-radius: 14px;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(249,115,22,0.15) 0%, transparent 70%);
+  }
+  .cta-section h3 {
+    font-family: 'DM Serif Display', serif;
+    color: white;
+    font-size: 28px;
+    margin: 0 0 12px;
+  }
+  .cta-section p {
+    color: rgba(255,255,255,0.6);
+    margin: 0 0 24px;
+    font-size: 16px;
+  }
+  .cta-btn {
+    display: inline-block;
+    background: var(--saffron);
+    color: white;
+    padding: 14px 36px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(249,115,22,0.3);
+  }
+  .cta-btn:hover {
+    background: var(--saffron-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(249,115,22,0.4);
+    color: white;
+    text-decoration: none;
+  }
+
+  /* ─── AUTHOR BOX ─── */
+  .author-box {
+    margin: 56px 0 0;
+    padding: 32px;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--cream-dark);
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+  }
+  .author-box-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--navy), var(--saffron));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+    font-size: 24px;
+    font-family: 'DM Serif Display', serif;
+    flex-shrink: 0;
+  }
+  .author-box h4 {
+    font-size: 18px;
+    margin-bottom: 4px;
+  }
+  .author-box p {
+    font-size: 15px;
+    color: var(--ink-muted);
+    margin: 0;
+  }
+
+  /* ─── FOOTER ─── */
+  .site-footer {
+    background: var(--navy);
+    padding: 40px 24px;
+    text-align: center;
+  }
+  .footer-inner {
+    max-width: var(--article-width);
+    margin: 0 auto;
+  }
+  .footer-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .footer-badge img {
+    height: 20px;
+  }
+  .footer-badge span {
+    color: rgba(255,255,255,0.6);
+    font-size: 13px;
+  }
+  .footer-text {
+    color: rgba(255,255,255,0.3);
+    font-size: 13px;
+  }
+
+  /* ─── READING PROGRESS ─── */
+  .progress-bar {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    height: 3px;
+    background: var(--saffron);
+    z-index: 101;
+    transition: width 0.1s linear;
+    box-shadow: 0 0 8px rgba(249,115,22,0.5);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 820px) {
+    .article-img, pre, .table-wrap, .pullquote { margin-left: 0; margin-right: 0; }
+    .cta-section, .compare-box { margin-left: 0; margin-right: 0; }
+    .stat-ribbon-inner { grid-template-columns: repeat(2, 1fr); }
+    .hero { padding: 56px 24px 48px; }
+    .hero h1 { font-size: 32px; }
+    .article h2 { font-size: 28px; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .stat-ribbon-inner { grid-template-columns: repeat(2, 1fr); }
+    .stat-item { padding: 18px 12px; }
+    .stat-number { font-size: 24px; }
+    .compare-box { grid-template-columns: 1fr; }
+    .topbar-tag { display: none; }
+    .author-box { flex-direction: column; align-items: center; text-align: center; }
+    pre { padding: 16px; }
+    pre code { font-size: 12px; }
+    .pullquote { padding: 24px; }
+    .pullquote p { font-size: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Reading Progress -->
+<div class="progress-bar" id="progressBar" style="width: 0%"></div>
+
+<!-- Top Bar -->
+<nav class="topbar">
+  <a class="topbar-brand" href="https://d1reocdt7srokm.cloudfront.net">
+    <div class="topbar-logo">V</div>
+    <span class="topbar-name">Vyapari.ai</span>
+  </a>
+  <span class="topbar-tag">AWS AI for Bharat 2026</span>
+  <a class="topbar-cta" href="https://d1reocdt7srokm.cloudfront.net">Try Live Demo</a>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-category">Technical Deep Dive</div>
+    <h1>Building an AI Commerce Copilot for India's <span>63 Million</span> Merchants</h1>
+    <p class="hero-subtitle">How Vyapari.ai uses multi-agent orchestration, template catalogs, and ONDC integration to onboard merchants in Hindi</p>
+    <div class="hero-meta">
+      <div class="hero-author">
+        <div class="hero-avatar">VG</div>
+        <div class="hero-author-info">
+          <span class="hero-author-name">Vikas Goel</span>
+          <span class="hero-author-role">CTO, Nexvia.ai</span>
+        </div>
+      </div>
+      <div class="hero-divider"></div>
+      <span class="hero-detail">March 6, 2026</span>
+      <span class="hero-detail">12 min read</span>
+    </div>
+  </div>
+</header>
+
+<!-- Stats Ribbon -->
+<div class="stat-ribbon">
+  <div class="stat-ribbon-inner">
+    <div class="stat-item">
+      <div class="stat-number">63M</div>
+      <div class="stat-label">Target Merchants</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">99.97%</div>
+      <div class="stat-label">Onboarding Gap</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">15 min</div>
+      <div class="stat-label">Catalog Creation</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">87.7%</div>
+      <div class="stat-label">Revenue Retained</div>
+    </div>
+  </div>
+</div>
+
+<!-- Article Body -->
+<article class="article">
+
+  <h2>The 99.97% Problem</h2>
+
+  <p>India's Open Network for Digital Commerce (ONDC) represents one of the most ambitious digital public infrastructure projects in history. Designed as the "UPI of commerce," ONDC aims to democratize e-commerce by creating an open, decentralized network where any seller can reach any buyer through any participating app. The total addressable market? India's 63 million micro, small, and medium enterprises (MSMEs) &mdash; the kirana stores, restaurants, sweet shops, and bakeries that form the backbone of India's retail economy.</p>
+
+  <p>Yet as of early 2026, fewer than 15,000 merchants have successfully onboarded onto ONDC. That's a <strong>99.97% gap</strong> between potential and reality.</p>
+
+  <p>The root causes are structural, not motivational. The typical ONDC onboarding flow requires merchants to:</p>
+  <ol>
+    <li>Navigate English-language seller dashboards (65% of Indian merchants are more comfortable in regional languages)</li>
+    <li>Manually catalog every product &mdash; often 3,000 to 5,000 items &mdash; by scanning barcodes or typing SKU details</li>
+    <li>Understand complex commission structures, HSN codes, GST rates, and Beckn protocol schemas</li>
+    <li>Complete KYC verification through unfamiliar digital workflows</li>
+  </ol>
+
+  <p>For a 45-year-old kirana owner in Lajpat Nagar who runs his business through WhatsApp voice notes and handwritten ledgers, this is an insurmountable barrier. Existing tools like Seller.ondc.org and MyStore require literacy in English and comfort with web applications &mdash; precisely what the "next half billion" lack.</p>
+
+  <div class="pullquote">
+    <p>The merchant we're building for speaks Hindi, runs a physical store, owns a smartphone, and lives inside WhatsApp.</p>
+  </div>
+
+  <figure class="article-img">
+    <img src="blog_01_landing_page.png" alt="Vyapari.ai landing page" loading="lazy">
+    <figcaption>Vyapari.ai landing page with Hindi hero text and 4 store types</figcaption>
+  </figure>
+
+  <hr>
+
+  <h2>The Template Catalog Insight</h2>
+
+  <p>The breakthrough came from a simple observation: <strong>every kirana store in Delhi stocks the same 500 products.</strong></p>
+
+  <p>Walk into any neighborhood grocery store from Lajpat Nagar to Dwarka, and you'll find Amul Gold Milk (&#8377;32 for 500ml), Britannia Good Day biscuits (&#8377;35 for 200g), Tata Salt (&#8377;22 for 1kg), and Maggi noodles (&#8377;14 for 70g). Brand preference varies by income bracket and geography, but the core SKU universe is remarkably consistent.</p>
+
+  <p>This insight transforms the onboarding problem. Instead of asking a merchant to <strong>create</strong> a catalog from scratch, we can ask them to <strong>confirm</strong> a pre-built template:</p>
+
+  <div class="compare-box">
+    <div class="compare-old">
+      <div class="compare-label">Old Way</div>
+      <p>"Scan this barcode. Enter product name. Enter MRP. Select category. Enter HSN code. Choose GST rate. Repeat 3,000 times."</p>
+    </div>
+    <div class="compare-new">
+      <div class="compare-label">New Way</div>
+      <p>"Does your store stock Amul Gold Milk?" &rarr; [Yes] &rarr; "Price?" &rarr; [&#8377;32] &rarr; Next product.</p>
+    </div>
+  </div>
+
+  <p>We built <strong>278 curated products</strong> across 4 store types:</p>
+  <ul>
+    <li><strong>Kirana (134 items)</strong>: Dairy, staples, snacks, beverages, personal care, household</li>
+    <li><strong>Restaurant (73 items)</strong>: North Indian, South Indian, Chinese, beverages, desserts</li>
+    <li><strong>Sweet Shop (51 items)</strong>: Traditional sweets, namkeen, festive specials</li>
+    <li><strong>Bakery (20 items)</strong>: Breads, cakes, pastries, cookies</li>
+  </ul>
+
+  <p>Each product includes Hindi + English names, accurate MRP, HSN code + GST rate, ONDC category mapping, and barcode/EAN for future scan-to-confirm flows.</p>
+
+  <p><strong>Result:</strong> A merchant can catalog 80 products in 15 minutes instead of 15 hours. This single innovation unlocks ONDC for thousands of merchants who would otherwise never complete onboarding.</p>
+
+  <figure class="article-img">
+    <img src="blog_06_template_catalog.png" alt="Template catalog" loading="lazy">
+    <figcaption>Template catalog with 134 products across 9 categories &mdash; merchant selects instead of creating</figcaption>
+  </figure>
+
+  <hr>
+
+  <h2>Multi-Agent Architecture on Bedrock AgentCore</h2>
+
+  <p>Vyapari.ai is not a chatbot calling APIs. It's a <strong>team of specialist AI agents</strong> coordinated by a supervisor &mdash; each with distinct capabilities, persistent memory, and access to external tools.</p>
+
+  <h3>Why Multi-Agent?</h3>
+  <p>The merchant journey requires fundamentally different cognitive skills:</p>
+  <ul>
+    <li><strong>Conversational extraction</strong> (onboarding): Slot-filling from unstructured Hindi text</li>
+    <li><strong>Visual analysis</strong> (catalog): Multimodal understanding of shelf photos</li>
+    <li><strong>Structured reasoning</strong> (orders): Fee calculations, ONDC protocol compliance</li>
+    <li><strong>Time-series analysis</strong> (intelligence): Demand forecasting, stock trend detection</li>
+  </ul>
+
+  <p>A single monolithic LLM would excel at none of these. By decomposing the problem into specialist agents, we achieve better accuracy, parallel execution, independent evolution, and full observability.</p>
+
+  <h3>The Agent System</h3>
+  <p><strong>Supervisor Agent</strong> routes every merchant message to the appropriate specialist:</p>
+
+  <pre data-lang="python"><code><span class="kw">from</span> strands <span class="kw">import</span> Agent, tool
+<span class="kw">from</span> agents.onboarding_agent <span class="kw">import</span> create_onboarding_agent
+<span class="kw">from</span> agents.catalog_agent <span class="kw">import</span> create_catalog_agent
+<span class="kw">from</span> agents.order_agent <span class="kw">import</span> create_order_agent
+<span class="kw">from</span> agents.intelligence_agent <span class="kw">import</span> create_intelligence_agent
+
+<span class="kw">def</span> <span class="fn">create_supervisor_agent</span>() <span class="op">-></span> <span class="ty">Agent</span>:
+    onboarding_agent <span class="op">=</span> create_onboarding_agent()
+    catalog_agent <span class="op">=</span> create_catalog_agent()
+    order_agent <span class="op">=</span> create_order_agent()
+    intelligence_agent <span class="op">=</span> create_intelligence_agent()
+
+    <span class="cm">@tool</span>
+    <span class="kw">def</span> <span class="fn">handle_onboarding</span>(message: <span class="ty">str</span>) <span class="op">-></span> <span class="ty">str</span>:
+        <span class="st">"""Route to onboarding specialist for registration."""</span>
+        result <span class="op">=</span> onboarding_agent(message)
+        <span class="kw">return</span> result.message
+
+    <span class="cm">@tool</span>
+    <span class="kw">def</span> <span class="fn">handle_catalog</span>(message: <span class="ty">str</span>) <span class="op">-></span> <span class="ty">str</span>:
+        <span class="st">"""Route to catalog specialist for product management."""</span>
+        result <span class="op">=</span> catalog_agent(message)
+        <span class="kw">return</span> result.message
+
+    <span class="cm"># ... similar tools for order and intelligence agents</span>
+
+    model <span class="op">=</span> BedrockModel(
+        model_id<span class="op">=</span><span class="st">"us.anthropic.claude-sonnet-4-20250514-v1:0"</span>,
+        region_name<span class="op">=</span><span class="st">"us-east-1"</span>
+    )
+
+    <span class="kw">return</span> Agent(
+        model<span class="op">=</span>model,
+        system_prompt<span class="op">=</span>SUPERVISOR_PROMPT,
+        tools<span class="op">=</span>[handle_onboarding, handle_catalog, handle_orders, handle_intelligence]
+    )</code></pre>
+
+  <p>The supervisor maintains <strong>no domain logic</strong> &mdash; it's purely a router. This keeps reasoning chains short (1-2 LLM calls instead of 10+) and makes debugging tractable.</p>
+
+  <figure class="article-img">
+    <img src="blog_04_architecture_diagram.png" alt="Architecture diagram" loading="lazy">
+    <figcaption>Multi-agent system architecture on Amazon Bedrock AgentCore &mdash; 16 AWS services</figcaption>
+  </figure>
+
+  <h3>Amazon Bedrock AgentCore: The Runtime Layer</h3>
+
+  <p>We deploy all agents on <strong>Bedrock AgentCore Runtime</strong> &mdash; AWS's production-grade platform for multi-agent systems. AgentCore provides:</p>
+
+  <p><strong>1. Persistent Memory (STM + LTM + Episodic)</strong><br>
+  Each merchant session has short-term memory (conversation context), long-term memory (profile data), and episodic memory (past interactions). When a merchant returns after 3 days, the system remembers their product catalog, previous orders, stock level alerts, and preferred communication style.</p>
+
+  <p><strong>2. AgentCore Gateway (MCP Server)</strong><br>
+  All external tool calls &mdash; DynamoDB reads, S3 uploads, Transcribe jobs, Polly synthesis &mdash; route through the Gateway. This provides unified authentication, rate limiting, cost controls, and audit logs for every tool invocation.</p>
+
+  <p><strong>3. AgentCore Observability</strong><br>
+  Every agent invocation publishes structured traces to CloudWatch:</p>
+
+  <pre data-lang="json"><code>{
+  <span class="pr">"session_id"</span>: <span class="st">"abc-123"</span>,
+  <span class="pr">"supervisor_routed_to"</span>: <span class="st">"catalog_agent"</span>,
+  <span class="pr">"tools_called"</span>: [<span class="st">"analyze_photo"</span>, <span class="st">"update_product"</span>],
+  <span class="pr">"latency_ms"</span>: <span class="nu">2340</span>,
+  <span class="pr">"tokens_used"</span>: <span class="nu">856</span>,
+  <span class="pr">"success"</span>: <span class="kw">true</span>
+}</code></pre>
+
+  <figure class="article-img">
+    <img src="blog_08_agent_activity.png" alt="Agent activity panel" loading="lazy">
+    <figcaption>Real-time agent activity trace showing routing and latency metrics</figcaption>
+  </figure>
+
+  <h3>Claude Sonnet 4 on Bedrock</h3>
+  <p>We use <strong>Claude Sonnet 4</strong> (<code>us.anthropic.claude-sonnet-4-20250514-v1:0</code>) for all agents. Key capabilities: multimodal vision for shelf photos, structured JSON output for ONDC Beckn schemas, Hindi understanding with code-switching, and 200k token context window.</p>
+
+  <hr>
+
+  <h2>ONDC Integration: Transparent Commerce</h2>
+
+  <p>ONDC's value proposition hinges on <strong>fee transparency</strong>. Unlike Swiggy or Zomato, where the commission structure is opaque and one-sided, ONDC decomposes every rupee:</p>
+
+  <h3>Fee Structure Breakdown</h3>
+  <p>For a &#8377;374 grocery order on ONDC:</p>
+  <ul>
+    <li><strong>Buyer app fee</strong> (Paytm/Magicpin): &#8377;8 (2.1%)</li>
+    <li><strong>Seller app fee</strong> (Vyapari.ai): &#8377;4 (1.0%)</li>
+    <li><strong>Network fee</strong> (ONDC protocol): &#8377;2 (0.5%)</li>
+    <li><strong>Logistics</strong> (Shadowfax/Dunzo): &#8377;25 (6.7%)</li>
+    <li><strong>GST</strong> on fees: &#8377;7 (18% on fees)</li>
+  </ul>
+
+  <p><strong>Merchant receives: &#8377;328 (87.7% of order value)</strong></p>
+
+  <p>Compare this to traditional aggregators:<br>
+  <strong>Swiggy:</strong> &#8377;374 - &#8377;131 (35% commission) = &#8377;243 (65%)<br>
+  <strong>Zomato:</strong> &#8377;374 - &#8377;105 (28% commission) = &#8377;269 (72%)</p>
+
+  <p><strong>The merchant saves &#8377;85 per order.</strong> For a restaurant doing 50 orders/day, that's &#8377;4,250/day or &#8377;1.5 lakh/month in retained earnings.</p>
+
+  <figure class="article-img">
+    <img src="blog_05_fee_comparison.png" alt="Fee comparison chart" loading="lazy">
+    <figcaption>ONDC fee transparency: 87.7% to merchant vs 65% on Swiggy</figcaption>
+  </figure>
+
+  <h3>Beckn Protocol Compliance</h3>
+  <p>ONDC uses the <a href="https://becknprotocol.io/">Beckn protocol</a> &mdash; an open API specification for decentralized commerce. Vyapari.ai auto-generates compliant catalog descriptors:</p>
+
+  <pre data-lang="json"><code>{
+  <span class="pr">"descriptor"</span>: {
+    <span class="pr">"name"</span>: <span class="st">"Amul Gold Milk"</span>,
+    <span class="pr">"short_desc"</span>: <span class="st">"Full Cream Milk"</span>,
+    <span class="pr">"long_desc"</span>: <span class="st">"Amul Gold Homogenised Toned Milk with 4.5% fat"</span>,
+    <span class="pr">"images"</span>: [<span class="st">"https://s3.../amul-gold-500ml.jpg"</span>]
+  },
+  <span class="pr">"price"</span>: {
+    <span class="pr">"currency"</span>: <span class="st">"INR"</span>,
+    <span class="pr">"value"</span>: <span class="st">"32.00"</span>,
+    <span class="pr">"maximum_value"</span>: <span class="st">"35.00"</span>
+  },
+  <span class="pr">"category_id"</span>: <span class="st">"Dairy &amp; Cheese"</span>,
+  <span class="pr">"@ondc/org/statutory_reqs_packaged_commodities"</span>: {
+    <span class="pr">"manufacturer_or_packer_name"</span>: <span class="st">"Amul"</span>,
+    <span class="pr">"common_or_generic_name_of_commodity"</span>: <span class="st">"Milk"</span>
+  }
+}</code></pre>
+
+  <p>Merchants never see this complexity &mdash; Vyapari.ai handles schema generation, validation, and ONDC network registration.</p>
+
+  <hr>
+
+  <h2>Intelligence Agent: Daily Value</h2>
+
+  <p>Most seller platforms are <strong>transactional</strong> &mdash; they help you list products and fulfill orders. Vyapari.ai is <strong>conversational</strong> &mdash; it becomes the merchant's daily advisor.</p>
+
+  <p>The <strong>Intelligence Agent</strong> generates a morning brief every day:</p>
+
+  <div class="hindi-block">
+    <strong>&#x1F305; &#x0928;&#x092E;&#x0938;&#x094D;&#x0924;&#x0947; &#x0930;&#x092E;&#x0947;&#x0936; &#x091C;&#x0940;! &#x0906;&#x091C; 6 &#x092E;&#x093E;&#x0930;&#x094D;&#x091A;, &#x0917;&#x0941;&#x0930;&#x0941;&#x0935;&#x093E;&#x0930;</strong>
+    <strong>&#x1F4CA; &#x0915;&#x0932; &#x0915;&#x093E; &#x092C;&#x093F;&#x091C;&#x0928;&#x0947;&#x0938; (5 &#x092E;&#x093E;&#x0930;&#x094D;&#x091A;):</strong>
+    <ul>
+      <li>Orders: 8 (&uarr; 2 from avg)</li>
+      <li>Revenue: &#8377;2,450</li>
+      <li>Amount received: &#8377;2,143 (87.5%)</li>
+      <li>ONDC fees: &#8377;307 (vs &#8377;857 on Swiggy &mdash; you saved &#8377;550!)</li>
+    </ul>
+    <strong>&#x26A0;&#xFE0F; &#x0938;&#x094D;&#x091F;&#x0949;&#x0915; &#x0905;&#x0932;&#x0930;&#x094D;&#x091F;:</strong>
+    <ul>
+      <li>&#x1F95B; Amul Gold Milk &mdash; 3 liters &#x092C;&#x091A;&#x0947; &#x0939;&#x0948;&#x0902; (restock today)</li>
+      <li>&#x1F36A; Parle-G Biscuits &mdash; &#x0915;&#x0932; 12 packets &#x092C;&#x093F;&#x0915;&#x0947; (high demand)</li>
+    </ul>
+    <strong>&#x1F4C8; &#x0921;&#x093F;&#x092E;&#x093E;&#x0902;&#x0921; &#x092B;&#x094B;&#x0930;&#x0915;&#x093E;&#x0938;&#x094D;&#x091F;:</strong>
+    <ul>
+      <li>&#x1F3A8; <strong>Holi is tomorrow!</strong> Colors, sweets, namkeen &#x0915;&#x0940; demand 3x &#x092C;&#x0922;&#x093C;&#x0947;&#x0917;&#x0940;</li>
+    </ul>
+  </div>
+
+  <figure class="article-img">
+    <img src="blog_07_morning_brief.png" alt="Morning brief" loading="lazy">
+    <figcaption>Daily intelligence brief with stock alerts and demand forecasting</figcaption>
+  </figure>
+
+  <p>This intelligence comes from order history analysis (DynamoDB time-series queries), festive calendar awareness (Holi, Diwali, Navratri, Eid), simulated price comparison, and stock velocity trends.</p>
+
+  <hr>
+
+  <h2>AWS Services: The Full Stack</h2>
+
+  <p>Vyapari.ai uses <strong>16 AWS services</strong> across compute, AI/ML, storage, and observability:</p>
+
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Service</th><th>Role</th><th>Why This Matters</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Bedrock AgentCore</strong></td><td>Multi-agent runtime, memory, gateway</td><td>Production-grade agent orchestration</td></tr>
+      <tr><td><strong>Bedrock (Claude Sonnet 4)</strong></td><td>LLM for all agents</td><td>Best multimodal + Hindi support</td></tr>
+      <tr><td><strong>Bedrock Knowledge Base</strong></td><td>Visual similarity search</td><td>Fill gaps when vision uncertain</td></tr>
+      <tr><td><strong>Nova Embeddings</strong></td><td>Vector search for images</td><td>Match shelf photos to catalog</td></tr>
+      <tr><td><strong>Amazon Transcribe</strong></td><td>Hindi speech-to-text</td><td>Voice onboarding</td></tr>
+      <tr><td><strong>Amazon Polly</strong></td><td>Hindi text-to-speech</td><td>Voice responses</td></tr>
+      <tr><td><strong>Amazon Translate</strong></td><td>Multilingual support</td><td>Tamil, Telugu, Bengali</td></tr>
+      <tr><td><strong>DynamoDB</strong></td><td>Merchants, products, orders</td><td>Single-digit ms reads</td></tr>
+      <tr><td><strong>S3</strong></td><td>Photos, voice, product images</td><td>Durable storage</td></tr>
+      <tr><td><strong>CloudFront</strong></td><td>Frontend CDN</td><td>&lt; 100ms latency</td></tr>
+      <tr><td><strong>Lambda</strong></td><td>API handlers</td><td>Serverless, auto-scaling</td></tr>
+      <tr><td><strong>API Gateway</strong></td><td>REST API</td><td>CORS, throttling</td></tr>
+      <tr><td><strong>CloudWatch</strong></td><td>Logs, metrics, traces</td><td>Full observability</td></tr>
+      <tr><td><strong>EC2</strong></td><td>FastAPI server</td><td>Long-running connections</td></tr>
+      <tr><td><strong>SQS</strong></td><td>Async processing</td><td>Decouple uploads</td></tr>
+      <tr><td><strong>Cognito</strong></td><td>User auth (future)</td><td>Secure accounts</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p>The key architectural decision was <strong>Bedrock AgentCore</strong>. We could have built custom orchestration with Step Functions + Lambda, but AgentCore gives us built-in memory management, standardized tool interface (MCP protocol), CloudWatch integration, and session isolation.</p>
+
+  <p>This is <strong>infrastructure as intelligence</strong> &mdash; AWS handling the undifferentiated heavy lifting so we focus on agent logic.</p>
+
+  <hr>
+
+  <h2>Results &amp; What's Next</h2>
+
+  <p><strong>What We Built (3 Days):</strong></p>
+  <ul>
+    <li>4 store types with 278 curated products</li>
+    <li>3-message onboarding (zero forms, pure conversation)</li>
+    <li>15-minute catalog creation (vs. 15 hours manual)</li>
+    <li>87.7% merchant revenue retention (vs. 65% on Swiggy)</li>
+    <li>Real-time fee transparency + order management</li>
+    <li>Daily intelligence briefs with stock alerts + demand forecasts</li>
+  </ul>
+
+  <figure class="article-img">
+    <img src="blog_03_chat_conversation.png" alt="Chat conversation" loading="lazy">
+    <figcaption>Hindi conversational onboarding &mdash; 3 messages to register a merchant on ONDC</figcaption>
+  </figure>
+
+  <p><strong>What's Next:</strong></p>
+  <ol>
+    <li><strong>GS1 India Integration</strong> &mdash; Merchants scan a product, we pull verified MRP, HSN code, and ONDC category.</li>
+    <li><strong>WhatsApp Business API</strong> &mdash; Production deployment inside WhatsApp where 500M+ Indians already transact.</li>
+    <li><strong>Real ONDC Sandbox</strong> &mdash; End-to-end order fulfillment on ONDC's staging network.</li>
+    <li><strong>Multimodal Knowledge Base</strong> &mdash; 2,000+ product images with Nova embeddings for visual search.</li>
+    <li><strong>Regional Language Expansion</strong> &mdash; Tamil, Telugu, Bengali, Marathi (35 crore speakers).</li>
+  </ol>
+
+  <hr>
+
+  <h2>The Vision: AI for Every Merchant in Bharat</h2>
+
+  <p>ONDC's promise &mdash; fair, open, decentralized commerce &mdash; cannot be realized without merchant-side tooling that meets merchants where they are. Vyapari.ai proves that <strong>conversational AI, template catalogs, and fee transparency</strong> can unlock ONDC for the "next 63 million."</p>
+
+  <p>This isn't just about technology. It's about ensuring that the kirana owner in Lajpat Nagar, the dhaba operator in Ludhiana, and the sweet shop in Chennai can participate in India's digital economy &mdash; in their language, on their terms, with their data.</p>
+
+  <div class="pullquote">
+    <p>Aapki dukaan. Aapka naam. Ab poore Bharat mein.</p>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <h3>Try Vyapari.ai Live</h3>
+    <p>Experience the full merchant journey &mdash; register, build catalog, see orders, get morning brief.</p>
+    <a class="cta-btn" href="https://d1reocdt7srokm.cloudfront.net">Launch Demo</a>
+  </div>
+
+  <!-- Author -->
+  <div class="author-box">
+    <div class="author-box-avatar">VG</div>
+    <div>
+      <h4>Vikas Goel</h4>
+      <p>CTO at Nexvia.ai, building voice AI systems for India's next billion users. 28+ years in AI and telecom, with production deployments serving millions of daily interactions. Built for AWS AI for Bharat Hackathon 2026 &mdash; Professional Track.</p>
+    </div>
+  </div>
+
+  <p style="margin-top:32px; font-size:15px; color:var(--ink-muted);"><strong>Acknowledgments:</strong> Thank you to the AWS Bedrock AgentCore team for early access to the platform, the ONDC team for documentation support, and the hundreds of kirana owners who shared their onboarding pain points during user research.</p>
+
+</article>
+
+<!-- Footer -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-badge">
+      <span>Powered by <strong>Amazon Bedrock AgentCore</strong></span>
+    </div>
+    <p class="footer-text">Built for AWS AI for Bharat Hackathon 2026 | Professional Track</p>
+  </div>
+</footer>
+
+<script>
+  // Reading progress bar
+  window.addEventListener('scroll', () => {
+    const h = document.documentElement;
+    const pct = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
+    document.getElementById('progressBar').style.width = Math.min(pct, 100) + '%';
+  });
+</script>
+
+</body>
+</html>

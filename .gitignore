@@ -1,0 +1,54 @@
+# Environment & Secrets
+.env
+.env.local
+.env.*.local
+
+# SSH Keys & Certificates
+*.pem
+*.key
+*.cert
+vyapari-key.pem
+
+# AWS / AgentCore Config (contains real ARNs)
+.bedrock_agentcore.yaml
+.bedrock_agentcore/
+
+# Claude Code local settings (contains EC2 IP, paths)
+.claude/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Screenshots & build artifacts (large PNGs deployed to S3)
+blog_*.png
+blog_chart_*.html
+blog_architecture.html
+blog_published_preview.png
+cloudfront-*.png
+phase*.png
+vyapari-*.png
+
+# Internal development notes (contain account IDs)
+PROJECT_COMPLETE.md
+PHASE_*.md
+DEPLOYMENT.md
+VOICE_FIX.md
+BLOG_READY.md
+BLOG_SCREENSHOTS.md
+
+# Temporary files
+*.tmp
+*.log
